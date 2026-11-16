@@ -223,7 +223,7 @@ class InferenceServer:
             return
 
         port = self.config.get("server", {}).get("grpc_port", 50051)
-        self.server.add_insecure_port(f"[::]:{port}")
+        self.server.add_insecure_port(f"127.0.0.1:{port}")  # hardened: local only
         await self.server.start()
         logger.info("CyberVerse Inference Server started on port %d", port)
         logger.info("Registered plugins: %s", self.registry.registered_names)

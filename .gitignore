@@ -53,3 +53,6 @@ models/SoulX-LiveAct/uploads/
 skills-lock.json
 .codegraph/
 tmp/
+
+# Local run logs written by start-jarvis.ps1
+logs/
