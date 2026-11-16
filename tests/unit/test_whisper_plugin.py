@@ -76,9 +76,9 @@ class TestWhisperASRPluginTranscribe:
         async def audio_stream():
             # Some speech audio (non-silent)
             speech = np.random.randn(16000).astype(np.float32) * 0.5
-            yield speech.tobytes()
+            yield (np.clip(speech, -1, 1) * 32767).astype("<i2").tobytes()
             # Silence to trigger transcription
-            silence = np.zeros(8000, dtype=np.float32)
+            silence = np.zeros(8000, dtype="<i2")
             yield silence.tobytes()
 
         events = []
@@ -119,7 +119,7 @@ class TestWhisperASRPluginTranscribe:
         # Only speech, no silence -- should flush at end
         async def audio_stream():
             speech = np.random.randn(8000).astype(np.float32) * 0.5
-            yield speech.tobytes()
+            yield (np.clip(speech, -1, 1) * 32767).astype("<i2").tobytes()
 
         events = []
         async for event in plugin.transcribe_stream(audio_stream()):

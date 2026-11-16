@@ -58,7 +58,9 @@ class WhisperASRPlugin(ASRPlugin):
         min_samples = int(self._min_audio_seconds * self._sample_rate)
 
         async for chunk_bytes in audio_stream:
-            audio_np = np.frombuffer(chunk_bytes, dtype=np.float32)
+            # The server streams 16 kHz mono pcm_s16le; Whisper expects float32 in [-1, 1].
+            usable = len(chunk_bytes) - (len(chunk_bytes) % 2)
+            audio_np = np.frombuffer(chunk_bytes[:usable], dtype="<i2").astype(np.float32) / 32768.0
             buffer = np.concatenate([buffer, audio_np])
 
             # Track silence
